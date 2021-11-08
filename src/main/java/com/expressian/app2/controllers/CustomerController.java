@@ -4,6 +4,7 @@ import com.expressian.app2.models.Customer;
 import com.expressian.app2.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,8 +18,8 @@ public class CustomerController {
 
     // Create
     @PostMapping
-    public @ResponseBody Customer createCustomer (@RequestBody Customer newCustomer) {
-        return repository.save(newCustomer);
+    public @ResponseBody ResponseEntity<Customer> createCustomer (@RequestBody Customer newCustomer) {
+        return new ResponseEntity<>(repository.save(newCustomer), HttpStatus.CREATED);
     }
 
     // Read all
@@ -27,8 +28,28 @@ public class CustomerController {
         return repository.findAll();
     }
 
+    // Read one by ID
     @GetMapping("/{id}")
     public @ResponseBody Customer getOneCustomer (@PathVariable Long id) {
         return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    // Update by ID
+    @PutMapping("/{id}")
+    public @ResponseBody Customer updateCustomer (@PathVariable Long id, @RequestBody Customer updates) {
+        Customer customer = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (updates.getName() != null) customer.setName(updates.getName());
+        if (updates.getAge() != null) customer.setAge(updates.getAge());
+        // TODO: needs revision, if statement not needed for boolean?
+        customer.setHasLicense(updates.isHasLicense());
+
+        return repository.save(customer);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCustomer (@PathVariable Long id) {
+        repository.deleteById(id);
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
 }

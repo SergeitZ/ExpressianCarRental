@@ -4,6 +4,7 @@ import com.expressian.app2.models.Vehicle;
 import com.expressian.app2.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,8 +18,8 @@ public class VehicleController {
 
     // Create
     @PostMapping
-    public @ResponseBody Vehicle createVehicle (@RequestBody Vehicle newVehicle) {
-        return repository.save(newVehicle);
+    public @ResponseBody ResponseEntity<Vehicle> createVehicle (@RequestBody Vehicle newVehicle) {
+        return new ResponseEntity<>(repository.save(newVehicle), HttpStatus.CREATED);
     }
 
     // Read all
@@ -31,6 +32,24 @@ public class VehicleController {
     @GetMapping("/{id}")
     public @ResponseBody Vehicle getOneVehicle (@PathVariable Long id) {
         return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    // Update by ID
+    @PutMapping("/{id}")
+    public @ResponseBody Vehicle updateVehicle (@PathVariable Long id, @RequestBody Vehicle updates) {
+        Vehicle vehicle = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (updates.getMake() != null) vehicle.setMake(updates.getMake());
+        if (updates.getModel() != null) vehicle.setModel(updates.getModel());
+        if (updates.getYear() != null) vehicle.setYear(updates.getYear());
+
+        return repository.save(vehicle);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteVehicle (@PathVariable Long id) {
+        repository.deleteById(id);
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
 
 }
