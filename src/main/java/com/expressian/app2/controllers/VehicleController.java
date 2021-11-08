@@ -3,6 +3,7 @@ package com.expressian.app2.controllers;
 import com.expressian.app2.models.Vehicle;
 import com.expressian.app2.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,12 @@ public class VehicleController {
     @GetMapping
     public @ResponseBody List<Vehicle> getVehicles() {
         return repository.findAll();
+    }
+
+    // Read all by make
+    @GetMapping("/make/{make}")
+    public ResponseEntity<List<Vehicle>> getVehicleByMake (@PathVariable String make) {
+        return new ResponseEntity<>(repository.findAllByMake(make, Sort.by("model")), HttpStatus.OK);
     }
 
     // Read one by ID

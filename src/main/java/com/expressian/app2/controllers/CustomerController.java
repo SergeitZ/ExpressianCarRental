@@ -2,7 +2,9 @@ package com.expressian.app2.controllers;
 
 import com.expressian.app2.models.Customer;
 import com.expressian.app2.repositories.CustomerRepository;
+import jdk.javadoc.doclet.Reporter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,12 @@ public class CustomerController {
     @GetMapping
     public @ResponseBody List<Customer> getCustomers() {
         return repository.findAll();
+    }
+
+    // Read all by License status
+    @GetMapping("/hasLicense/{hasLicense}")
+    public ResponseEntity<List<Customer>> getCustomerByHasLicense (@PathVariable Boolean hasLicense) {
+        return new ResponseEntity<>(repository.findAllByHasLicense(hasLicense, Sort.by("name")), HttpStatus.OK);
     }
 
     // Read one by ID
