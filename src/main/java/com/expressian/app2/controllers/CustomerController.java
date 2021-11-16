@@ -31,7 +31,8 @@ public class CustomerController {
     }
 
     // Read all by License status
-    @GetMapping("/hasLicense/{hasLicense}")
+    //TODO: endpoints more user friendly ie: license/yes or no
+    @GetMapping("/license/{hasLicense}")
     public ResponseEntity<List<Customer>> getCustomerByHasLicense (@PathVariable Boolean hasLicense) {
         return new ResponseEntity<>(repository.findAllByHasLicense(hasLicense, Sort.by("name")), HttpStatus.OK);
     }

@@ -11,7 +11,7 @@ public class Customer {
     private long id;
     private String name;
     private Integer age;
-    private boolean hasLicense;
+    private Boolean hasLicense;
 
     private Customer() {};
 
