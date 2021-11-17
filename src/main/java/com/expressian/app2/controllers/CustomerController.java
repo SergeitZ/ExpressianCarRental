@@ -50,6 +50,7 @@ public class CustomerController {
 
         if (updates.getName() != null) customer.setName(updates.getName());
         if (updates.getAge() != null) customer.setAge(updates.getAge());
+        if (updates.stores != null) customer.stores = updates.stores;
         // TODO: needs revision, if statement not needed for boolean?
         customer.setHasLicense(updates.isHasLicense());
 

@@ -1,5 +1,6 @@
 package com.expressian.app2.controllers;
 
+import com.expressian.app2.models.Customer;
 import com.expressian.app2.models.Store;
 import com.expressian.app2.repositories.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,16 @@ public class StoreController {
     @GetMapping("/{id}")
     public @ResponseBody Store getOneStore (@PathVariable Long id) {
         return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/customer")
+    public @ResponseBody
+    Store addCustomer (@RequestBody Store updates) {
+        Store store = repository.findById(updates.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        store.customers.addAll(updates.customers);
+
+        return repository.save(store);
     }
 
     @DeleteMapping("/{id}")
