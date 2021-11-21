@@ -1,6 +1,8 @@
 package com.expressian.app2.controllers;
 
+import com.expressian.app2.models.Location;
 import com.expressian.app2.models.Vehicle;
+import com.expressian.app2.repositories.LocationRepository;
 import com.expressian.app2.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -17,10 +19,27 @@ public class VehicleController {
     @Autowired
     private VehicleRepository repository;
 
+    @Autowired
+    private LocationRepository locationRepository;
+
     // Create
     @PostMapping
     public @ResponseBody ResponseEntity<Vehicle> createVehicle (@RequestBody Vehicle newVehicle) {
         return new ResponseEntity<>(repository.save(newVehicle), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/location")
+    public Vehicle addLocation (@RequestBody Vehicle car) {
+        Vehicle vehicle = repository.findById(car.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if(vehicle.getLocation() != null) {
+            Location oldLocation = vehicle.getLocation();
+            vehicle.setLocation(null);
+            locationRepository.delete(oldLocation);
+        }
+        Location location = locationRepository.save(car.getLocation());
+        vehicle.setLocation(location);
+        return repository.save(vehicle);
     }
 
     // Read all

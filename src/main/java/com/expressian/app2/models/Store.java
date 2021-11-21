@@ -14,13 +14,10 @@ public class Store {
     private long id;
     private String name;
 
-    @JsonManagedReference
     @OneToMany
     @JoinColumn(name = "store_id", referencedColumnName = "id")
     private List<Vehicle> vehicles;
 
-    @JsonManagedReference
-//    @JsonBackReference
     @ManyToMany
     @JoinTable(
             name = "store_customer",
