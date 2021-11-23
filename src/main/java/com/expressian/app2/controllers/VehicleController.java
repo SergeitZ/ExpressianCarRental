@@ -4,6 +4,7 @@ import com.expressian.app2.models.Location;
 import com.expressian.app2.models.Vehicle;
 import com.expressian.app2.repositories.LocationRepository;
 import com.expressian.app2.repositories.VehicleRepository;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -32,11 +33,6 @@ public class VehicleController {
     public Vehicle addLocation (@RequestBody Vehicle car) {
         Vehicle vehicle = repository.findById(car.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if(vehicle.getLocation() != null) {
-            Location oldLocation = vehicle.getLocation();
-            vehicle.setLocation(null);
-            locationRepository.delete(oldLocation);
-        }
         Location location = locationRepository.save(car.getLocation());
         vehicle.setLocation(location);
         return repository.save(vehicle);
@@ -68,14 +64,27 @@ public class VehicleController {
         if (updates.getMake() != null) vehicle.setMake(updates.getMake());
         if (updates.getModel() != null) vehicle.setModel(updates.getModel());
         if (updates.getYear() != null) vehicle.setYear(updates.getYear());
+        if (updates.getLocation() != null) {
+            vehicle.setLocation(updates.getLocation());
+            locationRepository.save(updates.getLocation());
+        }
 
         return repository.save(vehicle);
     }
 
+    // Destroy
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteVehicle (@PathVariable Long id) {
         repository.deleteById(id);
         return new ResponseEntity<>("Deleted", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/location")
+    public Vehicle destroyLocation(@PathVariable Long id) {
+        Vehicle vehicle = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE));
+
+        vehicle.setLocation(null);
+        return repository.save(vehicle);
     }
 
 }
