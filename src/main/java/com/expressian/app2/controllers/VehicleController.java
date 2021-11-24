@@ -4,7 +4,6 @@ import com.expressian.app2.models.Location;
 import com.expressian.app2.models.Vehicle;
 import com.expressian.app2.repositories.LocationRepository;
 import com.expressian.app2.repositories.VehicleRepository;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
